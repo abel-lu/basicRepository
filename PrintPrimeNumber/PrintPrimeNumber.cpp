@@ -1,54 +1,84 @@
-// PrintPrimeNumber.cpp : 定义控制台应用程序的入口点。
+// Parallel_for_temp.cpp : 定义控制台应用程序的入口点。
 //
 
 #include "stdafx.h"
-#include "stdlib.h"
-#include "iostream"
+#include <iostream>
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/opencv.hpp>
 
 using namespace std;
+using namespace cv;
 
-//判断输入数是否偶数
-int checkEvenNumber(int n)
+namespace myspace
 {
-	if (n % 2 == 0) {
-		return 1;
-	}
-	else {
-		return 0;
+	//自定义类，继承自ParallelLoopBody
+	class myParallel : public ParallelLoopBody
+	{
+	private:
+		Mat& src;
+	public:
+		//构造函数 初始化列表
+		myParallel(Mat& image) :src(image)
+		{
+		}
+		//重载函数调用运算符()；后面的const是对类成员的限制，不允许更改类的成员变量
+		void operator()(const Range& range) const
+		{
+			int height = src.rows;
+			for (int i = range.start; i < range.end; i++)
+			{
+				uchar *data = src.ptr<uchar>(i);
+				for (int j = 0; j < height; ++j)
+				{
+					data[j] = std::pow(data[j], 3);	//逐元素求3次方  
+				}
+			}
+		}
+	};
+	//调用parallel_for_函数实现并行计算
+	void testParallelFor(Mat& src)
+	{
+		int width = src.cols;
+		parallel_for_(Range(0, width), myParallel(src));
 	}
 }
 
-//判断输入数是否为质数
-int checkPrimeNumber(int n)
+//使用普通for循环函数，遍历图像元素进行立方操作
+void cube(Mat& src)
 {
-	int i,flag=1;
-	int number = int(n / 2 + 1);
-	for (i = 2; i <= number; i++) {
-		//if (checkEvenNumber(i) == 0) {
-			if (n%i == 0)
-				flag=0;
+	int width = src.cols;
+	int height = src.rows;
+	for (int i = 0; i < width; i++)
+	{
+		//ptr方式访问像素，返回行的首地址
+		uchar *data = src.ptr<uchar>(i);
+		for (int j = 0; j < height; ++j)
+		{
+			data[j] = std::pow(data[j], 3);
 		}
-		//else
-			//return 0;
-	//}
-	if (flag == 0)
-		return 0;
-	else
-		return 1;
+	}
 }
 
 int main()
 {
-	int number=100;
-	for (int i = 2; i <=number; i++)
-	{
-		//判断数据，res标志为1，是质数
-		int res = checkPrimeNumber(i);
-		if (res == 1) {
-			cout << "the number is:"<<i << endl;
-		}
-	}
+	Mat testForParallel(6400, 4800, CV_16U);
+	Mat testForSequential(6400, 4800, CV_16U);
+
+	//测试耗时对比
+	//t1;t2计时parallel_for_、Sequential for
+	double t1 = (double)getTickCount();
+	myspace::testParallelFor(testForParallel);
+	t1 = ((double)getTickCount() - t1) / getTickFrequency();
+	cout << " parallel  for  耗时:" << t1 * 1000 << "ms" << endl;
+
+	double t2 = (double)getTickCount();
+	cube(testForSequential);
+	t2 = ((double)getTickCount() - t2) / getTickFrequency();
+	cout << "Sequential for  耗时:" << t2 * 1000 << "ms" << endl;
+	cout << "   加速倍数         :" << t2 / t1 << endl;
+
 	system("pause");
-    return 0;
+	return 0;
 }
 
