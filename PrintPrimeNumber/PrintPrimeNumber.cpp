@@ -2,52 +2,46 @@
 //
 
 #include "stdafx.h"
-#include "stdlib.h"
 #include "iostream"
-
+#include<opencv2/opencv.hpp>
+#include "function.h"
+using namespace cv;
 using namespace std;
-
-//判断输入数是否偶数
-int checkEvenNumber(int n)
-{
-	if (n % 2 == 0) {
-		return 1;
-	}
-	else {
-		return 0;
-	}
-}
-
-//判断输入数是否为质数
-int checkPrimeNumber(int n)
-{
-	int i,flag=1;
-	int number = int(n / 2 + 1);
-	for (i = 2; i <= number; i++) {
-		//if (checkEvenNumber(i) == 0) {
-			if (n%i == 0)
-				flag=0;
-		}
-		//else
-			//return 0;
-	//}
-	if (flag == 0)
-		return 0;
-	else
-		return 1;
-}
 
 int main()
 {
-	int number=100;
-	for (int i = 2; i <=number; i++)
-	{
-		//判断数据，res标志为1，是质数
-		int res = checkPrimeNumber(i);
-		if (res == 1) {
-			cout << "the number is:"<<i << endl;
-		}
-	}
+	double start = static_cast<double>(cvGetTickCount());
+
+	//读取图片
+	readImage();
+
+	//读取视频,以及打开摄像头
+	readVideo();
+
+	//读取图像序列	
+	readSequence();
+
+	//Mat的创建
+	createMat();
+
+	//Mat的复制方法
+	copyMat();
+
+	//Mat的基本运算
+	calcMat();
+
+	//基本的线性代数操作
+	calcLinearAlg();
+
+	//利用Mat求解线性方程
+	solveLinearEquations();
+
+	//结束计时
+	double time = ((double)cvGetTickCount() - start) / cvGetTickFrequency();
+	//显示时间
+	cout << "processing time:" << time / 1000 << "ms" << endl;
+
+	//等待键盘响应，按任意键结束程序
 	system("pause");
     return 0;
 }
