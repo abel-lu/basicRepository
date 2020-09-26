@@ -2,53 +2,43 @@
 //
 
 #include "stdafx.h"
-#include "stdlib.h"
-#include "iostream"
+#include <opencv.hpp>
+#include "function.h"
 
+using namespace cv;
 using namespace std;
-
-//判断输入数是否偶数
-int checkEvenNumber(int n)
-{
-	if (n % 2 == 0) {
-		return 1;
-	}
-	else {
-		return 0;
-	}
-}
-
-//判断输入数是否为质数
-int checkPrimeNumber(int n)
-{
-	int i,flag=1;
-	int number = int(n / 2 + 1);
-	for (i = 2; i <= number; i++) {
-		//if (checkEvenNumber(i) == 0) {
-			if (n%i == 0)
-				flag=0;
-		}
-		//else
-			//return 0;
-	//}
-	if (flag == 0)
-		return 0;
-	else
-		return 1;
-}
 
 int main()
 {
-	int number=100;
-	for (int i = 2; i <=number; i++)
-	{
-		//判断数据，res标志为1，是质数
-		int res = checkPrimeNumber(i);
-		if (res == 1) {
-			cout << "the number is:"<<i << endl;
-		}
-	}
-	system("pause");
-    return 0;
-}
+	//开始计时
+	double start = static_cast<double>(cvGetTickCount());
 
+	//基本图形的绘制
+
+	//绘制直线
+	drawLines();
+
+	//绘制矩形
+	drawRectangles();
+
+	//绘制圆形
+	drawCircles();
+
+	//绘制椭圆，或圆弧
+	drawEllipse();
+
+	//绘制标记
+	drawMarkers();
+
+	//字符
+	writeText();
+
+	//结束计时
+	double time = ((double)cvGetTickCount() - start) / cvGetTickFrequency();
+	//显示时间
+	cout << "processing time:" << time / 1000 << "ms" << endl;
+
+	//等待键盘响应，按任意键结束程序
+	system("pause");
+	return 0;
+}
