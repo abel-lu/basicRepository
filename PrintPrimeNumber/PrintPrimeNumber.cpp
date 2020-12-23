@@ -1,4 +1,4 @@
-// Parallel_for_temp.cpp : ¶¨Òå¿ØÖÆÌ¨Ó¦ÓÃ³ÌĞòµÄÈë¿Úµã¡£
+// Parallel_for_temp.cpp : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¨Ó¦ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµã¡£
 //
 
 #include "stdafx.h"
@@ -12,17 +12,17 @@ using namespace cv;
 
 namespace myspace
 {
-	//×Ô¶¨ÒåÀà£¬¼Ì³Ğ×ÔParallelLoopBody
+
 	class myParallel : public ParallelLoopBody
 	{
 	private:
 		Mat& src;
 	public:
-		//¹¹Ôìº¯Êı ³õÊ¼»¯ÁĞ±í
+	
 		myParallel(Mat& image) :src(image)
 		{
 		}
-		//ÖØÔØº¯Êıµ÷ÓÃÔËËã·û()£»ºóÃæµÄconstÊÇ¶ÔÀà³ÉÔ±µÄÏŞÖÆ£¬²»ÔÊĞí¸ü¸ÄÀàµÄ³ÉÔ±±äÁ¿
+	
 		void operator()(const Range& range) const
 		{
 			int height = src.rows;
@@ -31,12 +31,12 @@ namespace myspace
 				uchar *data = src.ptr<uchar>(i);
 				for (int j = 0; j < height; ++j)
 				{
-					data[j] = std::pow(data[j], 3);	//ÖğÔªËØÇó3´Î·½  
+					data[j] = std::pow(data[j], 3);	
 				}
 			}
 		}
 	};
-	//µ÷ÓÃparallel_for_º¯ÊıÊµÏÖ²¢ĞĞ¼ÆËã
+
 	void testParallelFor(Mat& src)
 	{
 		int width = src.cols;
@@ -44,14 +44,13 @@ namespace myspace
 	}
 }
 
-//Ê¹ÓÃÆÕÍ¨forÑ­»·º¯Êı£¬±éÀúÍ¼ÏñÔªËØ½øĞĞÁ¢·½²Ù×÷
+
 void cube(Mat& src)
 {
 	int width = src.cols;
 	int height = src.rows;
 	for (int i = 0; i < width; i++)
 	{
-		//ptr·½Ê½·ÃÎÊÏñËØ£¬·µ»ØĞĞµÄÊ×µØÖ·
 		uchar *data = src.ptr<uchar>(i);
 		for (int j = 0; j < height; ++j)
 		{
@@ -65,18 +64,17 @@ int main()
 	Mat testForParallel(6400, 4800, CV_16U);
 	Mat testForSequential(6400, 4800, CV_16U);
 
-	//²âÊÔºÄÊ±¶Ô±È
-	//t1;t2¼ÆÊ±parallel_for_¡¢Sequential for
+
 	double t1 = (double)getTickCount();
 	myspace::testParallelFor(testForParallel);
 	t1 = ((double)getTickCount() - t1) / getTickFrequency();
-	cout << " parallel  for  ºÄÊ±:" << t1 * 1000 << "ms" << endl;
+	cout << " parallel  for  ï¿½ï¿½Ê±:" << t1 * 1000 << "ms" << endl;
 
 	double t2 = (double)getTickCount();
 	cube(testForSequential);
 	t2 = ((double)getTickCount() - t2) / getTickFrequency();
-	cout << "Sequential for  ºÄÊ±:" << t2 * 1000 << "ms" << endl;
-	cout << "   ¼ÓËÙ±¶Êı         :" << t2 / t1 << endl;
+	cout << "Sequential for  :" << t2 * 1000 << "ms" << endl;
+	cout << "  for        :" << t2 / t1 << endl;
 
 	system("pause");
 	return 0;
