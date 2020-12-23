@@ -68,7 +68,7 @@ int main()
 	double t1 = (double)getTickCount();
 	myspace::testParallelFor(testForParallel);
 	t1 = ((double)getTickCount() - t1) / getTickFrequency();
-	cout << " parallel  for  ��ʱ:" << t1 * 1000 << "ms" << endl;
+	cout << " parallel  for  " << t1 * 1000 << "ms" << endl;
 
 	double t2 = (double)getTickCount();
 	cube(testForSequential);
